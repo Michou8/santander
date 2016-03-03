@@ -17,6 +17,7 @@ remove.append('TARGET')
 id_train = []
 target = []
 train = []
+ti = time.time()
 for t in ctrain:
 	tmp = {}
 	target.append(float(t['TARGET']))
@@ -25,25 +26,15 @@ for t in ctrain:
 			tmp[key] = float(t[key])
 	#print tmp
 	train.append(tmp)
-	print 'Size:\t',len(train)
-	if len(train) == 5000 :
-		"""print 'Done'
-		dv = DictVectorizer()
-		X = dv.fit_transform(train)
-		y = target
-		X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-		print('EST)')
-		rf = RandomForestRegressor(n_estimators = 500,n_jobs=1)
-		rf = rf.fit(X_train,y_train)
-		#pred = rf.predict(X_test)"""
+	if len(train) == 5000:
+		print 'Size:\t',len(train)
+		print time.time()-ti
 		break
-		#raw_input()
 dv = DictVectorizer()
 X = dv.fit_transform(train)
 del train
 y = target
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-print('EST)')
 rf = RandomForestRegressor(n_estimators = 500,n_jobs=1)
 rf = rf.fit(X_train,y_train)
 ctrain = csv.DictReader(open('test.csv'))
@@ -59,17 +50,19 @@ for t in ctrain:
                 if key not in remove:
                         tmp[key] = float(t[key])
         #print tmp
-        #train.append(tmp)
-        #if len(train) == 1000 :
-        #dv = DictVectorizer()
-        X = dv.transform([tmp])
-                #y = target
-                #X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-                #rf = RandomForestRegressor(n_estimators = 500)
-                #rf = rf.fit(X_train,y_train)
-        pred = rf.predict(X)[0]
-	prediction.append(pred)	
-	print (len(prediction)*100)/75819.0
-	print len(prediction)
+        train.append(tmp)
+
+        if len(train) > 1000:
+        	#dv = DictVectorizer()
+	        X = dv.transform(train)
+	        pred = rf.predict(X)
+		for p in pred:
+			prediction.append(p)
+		print time.time()-ti
+		ti = time.time()
+		train = []
+	#prediction.append(pred)	
+	#print (len(prediction)*100)/75819.0
+	#print len(prediction)
 import pandas as pd
-pd.DataFrame({'ID':id_test,'TARGET':prediction}).to_csv('sub-03-03-2016.csv',index=False)
+pd.DataFrame({'ID':id_test,'TARGET':prediction}).to_csv('sub-'+str(time.time())+'.csv',index=False)
