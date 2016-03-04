@@ -26,7 +26,7 @@ for t in ctrain:
 			tmp[key] = float(t[key])
 	#print tmp
 	train.append(tmp)
-	if len(train) == 5000:
+	if len(train) > 5000:
 		print 'Size:\t',len(train)
 		print time.time()-ti
 		break
@@ -64,5 +64,10 @@ for t in ctrain:
 	#prediction.append(pred)	
 	#print (len(prediction)*100)/75819.0
 	#print len(prediction)
+X = dv.transform(train)
+pred = rf.predict(X)
+for p in pred:
+	prediction.append(p)
+
 import pandas as pd
 pd.DataFrame({'ID':id_test,'TARGET':prediction}).to_csv('sub-'+str(time.time())+'.csv',index=False)
