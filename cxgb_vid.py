@@ -8,9 +8,13 @@ from sklearn.grid_search import GridSearchCV   #Perforing grid search
 with open('stats.json') as f:
         remove_ = json.load(f)
 remove = remove_['removes']
-train = pd.read_csv('train.csv')[:5000]
-train.drop(remove,axis=1)
+train = pd.read_csv('train.csv')#[:500]
 print train.info()
+print train.columns
+train = train.drop(remove,axis=1)
+train.to_csv('train_modified.csv',index=False)
+print train.info()
+print train.columns
 target = 'TARGET'
 IDCol = 'ID'
 test = pd.read_csv('test.csv')
